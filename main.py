@@ -34,16 +34,38 @@ def substitution():
 
     plaintext = utils_substitution.substitution_decoding(cip_sample,rule)
     
-    # print(cip_sample)
+    #print(plaintext)
     #supponiamo che vengano correttamente mappate r = e, e = t, y = a perchè sono le 3 che compaiono più di frequente
     #riconosciamo nel testo il formato di una data, poichè abbiamo assunto che la a viene convertita correttamente il primo mese è aprile
     #modifichiamo la rule per farlo matchare
-    rule['f'], rule['d'] = 'p' , 'n'
-    rule['h'], rule['m'] = 'r', 'h'
-    rule['d'], rule['t'] = 'l', 'p'
+    rule['n'], rule['d'] = 'p' , 'f'
+    rule['v'], rule['m'] = 'r', 'h'
+    rule['h'], rule['t'] = 'l', 'd'
     print('alphabet: ', ''.join(rule.values()))
     print('alphabet: ', ''.join(rule.keys()))
     plaintext = utils_substitution.substitution_decoding(cip_sample,rule)
+
+    # mapping supposti corretti -> r = e, e = t, y = a, n = p, v = r, h = l
+    #secondo february
+
+    rule['i'], rule['d'] = 'f', 'w'
+    rule['c'], rule['b'] = 'u', 'm' 
+    plaintext = utils_substitution.substitution_decoding(cip_sample,rule)
+    # biography
+    rule['f'], rule['j'] = 'o', 'n'
+    plaintext = utils_substitution.substitution_decoding(cip_sample,rule)
+
+    #which he published in 
+    rule['t'], rule['l'] = 'c', 'd'
+    rule['b'], rule['l'] = 'd', 'm'
+    plaintext = utils_substitution.substitution_decoding(cip_sample,rule)
+
+    #shannon is noted for having founded information theory
+    rule['e'], rule['j'] = 'n', 't'
+    #rule[''], rule[''] = '', ''
+    plaintext = utils_substitution.substitution_decoding(cip_sample,rule)
+
+
 
     print(plaintext)
 
