@@ -12,14 +12,20 @@ ALPHABET = tuple(string.ascii_lowercase)
 
 
 def read_cipher(file_name):
-    with open(file=file_name, mode='r', encoding='utf-8') as file:
-        cipher = file.read()
-    return cipher
+    try:
+        with open(file=file_name, mode='r', encoding='utf-8') as file:
+            cipher = file.read()
+            return cipher
+    except (IOError, OSError):
+        return "It appears an error occurred while reading your file"
 
 
 def write_plaintext(plaintext, file_name):
-    with open(file=os.path.join(file_name), mode='w', encoding='utf-8') as file:
-        file.write(plaintext)
+    try:
+        with open(file=os.path.join(file_name), mode='w', encoding='utf-8') as file:
+            file.write(plaintext)
+    except (IOError, OSError):
+        return "It appears an error occurred while writing your file"
 
 
 def read_pickle(file_name):
