@@ -30,7 +30,7 @@ def write_plaintext(plaintext, file_name):
 def read_pickle(file_name):
     with open(file=file_name, mode='rb') as file:
         eng_dist = pickle.load(file)
-    return dict(sorted(eng_dist.items(), key=lambda x: x[1], reverse=True))
+    return eng_dist
 
 
 def plot_me(funs_list):
@@ -49,9 +49,9 @@ def caesar_decoding(ciphertext, shift=0):
     # NOTE: the shift is equal to 14
     alphabet = tuple(string.ascii_lowercase)
     ciphered_alphabet = alphabet[-shift:] + alphabet[:-shift]
-    print(ciphered_alphabet)
+    # print(ciphered_alphabet)
     rule = dict(zip(alphabet, ciphered_alphabet))
-    print(f'the rule is {rule}')
+    # print(f'the rule is {rule}')
     plaintext = [rule[letter] if 97 <= ord(letter) <= 127 else letter for letter in ciphertext]
     return ''.join(plaintext)
 
@@ -69,13 +69,13 @@ def caesar():
     write_plaintext(complete_plaintext, "caesar_plaintext")
 
 
-# _____________________ Substitution ___________________
+# _____________________ Substitution cipher ___________________
 
-def cipher_dist(ciphertext):
+def letter_dist(ciphertext):
     freq = list(ciphertext.lower().count(letter) for letter in ALPHABET)
     prob = freq / np.sum(freq)
     ciph_dist = dict(zip(ALPHABET, prob))
-    return dict(sorted(ciph_dist.items(), key=lambda x: x[1], reverse=True))
+    return ciph_dist
 
 
 def substitution_decoding(ciphertext, rule):
@@ -84,10 +84,11 @@ def substitution_decoding(ciphertext, rule):
 
 
 def substitution():
-
     ciphertext = read_cipher(os.path.join("ciphertext_simple.txt"))
-    ciph_dist = cipher_dist(ciphertext)
+    ciph_dist = letter_dist(ciphertext)
+    ciph_dist = dict(sorted(ciph_dist.items(), key=lambda x: x[1], reverse=True))
     eng_dist = read_pickle(os.path.join("letters-freq.pkl"))
+    eng_dist = dict(sorted(eng_dist.items(), key=lambda x: x[1], reverse=True))
 
     # print the distribution of the letters in the ciphertext
     for letter, prob in ciph_dist.items():
@@ -133,6 +134,32 @@ def substitution():
     write_plaintext(substitution_decoding(ciphertext, rule), "substitution_plaintext.txt")
 
 
+# _____________________ Caesar cipher - Automated  ___________________
+
+# I want to check if the distribution of the letters in the plaintext fits the one of the english distribution
+# In order to perform this task the chi-squared test has been computed
+def chi_sqr(plaintext_dist, eng_dist):
+    return np.sum([np.power(plaintext_dist[letter] - eng_dist[letter], 2) / eng_dist[letter] for letter in ALPHABET])
+
+
+def caesar_auto():
+    file_path = os.path.join('ciphertext_caesar.txt')
+    ciphertext = read_cipher(file_path)
+    plaintexts_list = [caesar_decoding(ciphertext, shift) for shift in range(len(ALPHABET))]
+    plaintext_dist = [letter_dist(plaintext) for plaintext in plaintexts_list]
+    eng_dist = read_pickle(os.path.join("letters-freq.pkl"))
+    chi_test = np.array([chi_sqr(dict(zip(ALPHABET, plain_dist_dict.values())), dict(zip(ALPHABET, eng_dist.values())))
+                         for plain_dist_dict in plaintext_dist])
+    shift = np.argmin(chi_test)
+
+    print(f'The computed shift is: {shift}')
+
+    complete_plaintext = caesar_decoding(ciphertext, SHIFT_EXERCISE)
+    write_plaintext(complete_plaintext, "caesar_plaintext")
+    return
+
+
 if __name__ == "__main__":
     # caesar()
-    substitution()
+    # substitution()
+    caesar_auto()
