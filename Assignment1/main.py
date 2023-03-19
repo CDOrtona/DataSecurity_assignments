@@ -10,7 +10,6 @@ ALPHABET = tuple(string.ascii_lowercase)
 
 # _____________________ utils ___________________
 
-
 def read_cipher(file_name):
     try:
         with open(file=file_name, mode='r', encoding='utf-8') as file:
@@ -73,10 +72,9 @@ def caesar():
 # _____________________ Substitution ___________________
 
 def cipher_dist(ciphertext):
-    alphabet = tuple(string.ascii_lowercase)
-    freq = list(ciphertext.lower().count(letter) for letter in alphabet)
+    freq = list(ciphertext.lower().count(letter) for letter in ALPHABET)
     prob = freq / np.sum(freq)
-    ciph_dist = dict(zip(alphabet, prob))
+    ciph_dist = dict(zip(ALPHABET, prob))
     return dict(sorted(ciph_dist.items(), key=lambda x: x[1], reverse=True))
 
 
@@ -86,20 +84,24 @@ def substitution_decoding(ciphertext, rule):
 
 
 def substitution():
-    eng_dist = read_pickle(os.path.join("letters-freq.pkl"))
 
     ciphertext = read_cipher(os.path.join("ciphertext_simple.txt"))
     ciph_dist = cipher_dist(ciphertext)
+    eng_dist = read_pickle(os.path.join("letters-freq.pkl"))
+
+    # print the distribution of the letters in the ciphertext
+    for letter, prob in ciph_dist.items():
+        print(f'{letter} -> {prob}')
 
     plot_me([[eng_dist, "English Alphabet Distribution"], [ciph_dist, "Ciphertext Alphabet Distribution"]])
 
     rule = dict(zip(ciph_dist.keys(), eng_dist.keys()))
-    print('alphabet: ', ''.join(rule.values()))
-    print('alphabet: ', ''.join(rule.keys()))
+    print(f"english_alphabet: {''.join(rule.values())}")
+    print(f"cipher_alphabet:  {''.join(rule.keys())}")
 
     cip_sample = ciphertext[:1000]
-
     plaintext = substitution_decoding(cip_sample, rule)
+    print(plaintext)
 
     # print(plaintext) supponiamo che vengano correttamente mappate r = e, e = t, y = a perchè sono le 3 che
     # compaiono più di frequente riconosciamo nel testo il formato di una data, poichè abbiamo assunto che la a viene
@@ -107,32 +109,28 @@ def substitution():
     rule['n'], rule['d'] = 'p', 'f'
     rule['v'], rule['m'] = 'r', 'h'
     rule['h'], rule['t'] = 'l', 'd'
-    print('alphabet: ', ''.join(rule.values()))
-    print('alphabet: ', ''.join(rule.keys()))
-    plaintext = substitution_decoding(cip_sample, rule)
 
     # mapping supposti corretti -> r = e, e = t, y = a, n = p, v = r, h = l
     # secondo february
-
     rule['i'], rule['d'] = 'f', 'w'
     rule['c'], rule['b'] = 'u', 'm'
-    plaintext = substitution_decoding(cip_sample, rule)
+
     # biography
     rule['f'], rule['j'] = 'o', 'n'
-    plaintext = substitution_decoding(cip_sample, rule)
 
     # which he published in
     rule['t'], rule['l'] = 'c', 'd'
     rule['b'], rule['l'] = 'd', 'm'
-    plaintext = substitution_decoding(cip_sample, rule)
 
     # shannon is noted for having founded information theory
     rule['e'], rule['j'] = 'n', 't'
-    plaintext = substitution_decoding(cip_sample, rule)
 
-    print(plaintext)
+    # xoined -> joined
+    # organiqations -> organization
+    rule['u'], rule['p'] = 'j', 'x'
+    rule['k'], rule['g'] = 'z', 'q'
 
-    write_plaintext(substitution_decoding(ciphertext, rule), "substitution_plaintext")
+    write_plaintext(substitution_decoding(ciphertext, rule), "substitution_plaintext.txt")
 
 
 if __name__ == "__main__":
