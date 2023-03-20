@@ -27,9 +27,12 @@ def write_plaintext(plaintext, file_name):
         return "It appears an error occurred while writing your file"
 
 
-def read_pickle(file_name):
+def read_pickle(file_name, bonus=False):
     with open(file=file_name, mode='rb') as file:
         eng_dist = pickle.load(file)
+
+    if bonus:
+        eng_dist = dict(sorted(eng_dist.items(), key=lambda x: x[1], reverse=True))
     return eng_dist
 
 
@@ -71,10 +74,12 @@ def caesar():
 
 # _____________________ Substitution cipher ___________________
 
-def letter_dist(ciphertext):
+def letter_dist(ciphertext, bonus=False):
     freq = list(ciphertext.lower().count(letter) for letter in ALPHABET)
     prob = freq / np.sum(freq)
     ciph_dist = dict(zip(ALPHABET, prob))
+    if bonus:
+        ciph_dist = dict(sorted(ciph_dist.items(), key=lambda x: x[1], reverse=True))
     return ciph_dist
 
 
@@ -85,10 +90,8 @@ def substitution_decoding(ciphertext, rule):
 
 def substitution():
     ciphertext = read_cipher(os.path.join("ciphertext_simple.txt"))
-    ciph_dist = letter_dist(ciphertext)
-    ciph_dist = dict(sorted(ciph_dist.items(), key=lambda x: x[1], reverse=True))
-    eng_dist = read_pickle(os.path.join("letters-freq.pkl"))
-    eng_dist = dict(sorted(eng_dist.items(), key=lambda x: x[1], reverse=True))
+    ciph_dist = letter_dist(ciphertext, True)
+    eng_dist = read_pickle(os.path.join("letters-freq.pkl"), True)
 
     # print the distribution of the letters in the ciphertext
     for letter, prob in ciph_dist.items():
@@ -151,6 +154,7 @@ def caesar_auto():
     chi_test = np.array([chi_sqr(dict(zip(ALPHABET, plain_dist_dict.values())), dict(zip(ALPHABET, eng_dist.values())))
                          for plain_dist_dict in plaintext_dist])
     shift = np.argmin(chi_test)
+    print(chi_test)
 
     print(f'The computed shift is: {shift}')
 
