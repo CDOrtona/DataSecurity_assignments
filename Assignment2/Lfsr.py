@@ -1,3 +1,6 @@
+from functools import reduce
+from operator import xor
+
 import numpy as np
 
 class Lfsr_class():
@@ -11,20 +14,19 @@ class Lfsr_class():
             self.state = [bool(int(i)) for i in list(bin(state)[2:])]
 
         self.output = self.state[self.length-1]
-        self.feedback = np.bitwise_xor.reduce([a & b for a, b in zip(self.poly[1:], self.state)])
+        self.feedback = reduce(xor, [a & b for a, b in zip(self.poly[1:], self.state)])
         self.counter = 0
 
     def __next__(self):
         self.counter += 1
-        print(self.state)
-        # print(f'type of state {type(self.feedback)}')
-        print(f'feedback -> {self.feedback}')
+        print(f'state -> {self.state}')
+        print(f'poly -> {self.poly}')
         print(f'output -> {self.output}')
-        self.output = self.state[self.length-1]
-        self.state = self.feedback + self.state[1:]
-        print(self.state[1:])
-        self.feedback = np.bitwise_xor.reduce([a & b for a, b in zip(self.poly[1:], self.state)])
-        # self.state = self.state >> 1
+        print(f'feedback -> {self.feedback}')
+        print(f'length -> {self.length}')
+        self.output = self.state[self.length-2]
+        self.state.insert(0, self.feedback)
+        self.feedback = reduce(xor, [a & b for a, b in zip(self.poly[1:], self.state[:self.length])])
         return self.output
 
     def __len__(self):

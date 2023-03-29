@@ -3,6 +3,7 @@ from itertools import islice
 
 if __name__ == '__main__':
 
+    # implement a descending order algorithm for the poly
     poly_list = [3, 1, 0]
     state_list = 7
 
@@ -18,7 +19,6 @@ if __name__ == '__main__':
         print(lfsr.counter)
         # print_lfsr(lfsr)
         pass
-
 
 
 
