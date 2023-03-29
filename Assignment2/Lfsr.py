@@ -1,32 +1,36 @@
-from functools import reduce
+import functools
 from operator import xor
-
-import numpy as np
 
 class Lfsr_class():
 
     def __init__(self, poly, state=None):
         self.length = max(poly)
-        self.poly = [i in poly for i in range(self.length+1)]
+        self.poly = [1 if i in poly else 0 for i in range(self.length+1) ]
+        print(self.poly)
         if state is None:
-            self.state = [True for _ in range(self.length+1)]
+            self.state = [1 for _ in range(self.length+1)]
         else:
-            self.state = [bool(int(i)) for i in list(bin(state)[2:])]
+            self.state = [int(i) for i in list(bin(state)[2:])]
 
         self.output = self.state[self.length-1]
-        self.feedback = reduce(xor, [a & b for a, b in zip(self.poly[1:], self.state)])
+        self.feedback = functools.reduce(xor, [a & b for a, b in zip(self.poly[1:], self.state)])
         self.counter = 0
 
     def __next__(self):
         self.counter += 1
-        print(f'state -> {self.state}')
-        print(f'poly -> {self.poly}')
-        print(f'output -> {self.output}')
-        print(f'feedback -> {self.feedback}')
-        print(f'length -> {self.length}')
-        self.output = self.state[self.length-2]
-        self.state.insert(0, self.feedback)
-        self.feedback = reduce(xor, [a & b for a, b in zip(self.poly[1:], self.state[:self.length])])
+        #print(self.state)
+        # print(f'type of state {type(self.feedback)}')
+        #print(f'feedback -> {self.feedback}')
+        #print(f'output -> {self.output}')
+        
+        self.state.insert(0, self.feedback )
+        self.state = self.state[:self.length]
+        
+        self.output = self.state[self.length-1]
+        #print(self.state[1:])
+        partial = [a&b for a,b in zip(self.poly[1:],self.state)]
+        self.feedback = functools.reduce(xor, partial)
+        
         return self.output
 
     def __len__(self):
