@@ -10,7 +10,7 @@ class Lfsr_class:
         self._state = state
         self.length = max(poly)
         self.poly = [1 if i in poly else 0 for i in range(self.length + 1)]
-        print(f'Initial state -> {self.poly}')
+        print(f'Initial state -> {self._state}')
 
         if state is None:
             self.state = [1 for _ in range(self.length + 1)]
@@ -59,3 +59,4 @@ class Lfsr_class:
         poly = "+".join(poly_list)
         string = f'\nPoly: {poly} \nState: {hex(self._state)}'
         return string
+    
