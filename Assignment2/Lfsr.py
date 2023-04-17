@@ -1,4 +1,4 @@
-import functools
+import functools    
 from operator import xor
 
 
@@ -59,4 +59,49 @@ class Lfsr_class:
         poly = "+".join(poly_list)
         string = f'\nPoly: {poly} \nState: {hex(self._state)}'
         return string
+
+
+
+
+class AlternatingStepGenerator(): 
+    ''' Documentation '''
     
+    def __init__(self, seed):
+        ''' Documentation '''
+        seed_bin = [int(i) for i in bin(seed)[2:]] #da implementare RISE AN ERROR
+
+        seed_c = seed_bin[8:]
+        seed_0 = seed_bin[:5]
+        seed_1 = seed_bin[5:8]        
+
+        self.lfsr_c = Lfsr_class([2,1,0], self.bit_to_int(seed_c))
+        self.lfsr_0 = Lfsr_class([5,2,0], self.bit_to_int(seed_0))
+        self.lfsr_1 = Lfsr_class([3,1,0], self.bit_to_int(seed_1))
+
+
+        
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        ''' Documentation '''
+        # Code here
+        if next(self.lfsr_c):
+            bit = next(self.lfsr_1)^self.lfsr_0.output
+        else:
+            bit = self.lfsr_1.output^next(self.lfsr_0)
+
+
+        return bit
+    
+    def bit_to_int(self,    bitlist):
+        out=0
+        for bit in bitlist:
+            out = (out << 1) | bit
+        return out
+    
+    def __str__(self) :
+        print
+
+    
+
