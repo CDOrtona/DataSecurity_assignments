@@ -7,10 +7,9 @@ def print_lfsr(lfsr):
     print(f'{lfsr.state} {lfsr.output} {lfsr.feedback}')
 
 
-if __name__ == '__main__':
-
-    poly_list = [4, 1, 0] #possibile errore di lunghezza poly != state
-    state_list = 17
+def lfsr_generator():
+    poly_list = [3, 1, 0]  # possibile errore di lunghezza poly != state
+    state_list = 7
 
     lfsr = Lfsr_class(poly_list, state_list)
 
@@ -21,8 +20,14 @@ if __name__ == '__main__':
     full_cycle = lfsr.cycle()
     print(f'\nfull LFSR cycle -> {full_cycle}')
 
+    P, comp = utils.berlekamp_massey(full_cycle)
+    print(P, comp)
 
-    P = utils.berlekamp_massey(full_cycle)
-    print(P)
 
-    #print(lfsr)
+# ______________ Alternating Step Generator _______________
+
+
+if __name__ == '__main__':
+    # lfsr_generator()
+    pass
+
