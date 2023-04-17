@@ -10,12 +10,12 @@ class Lfsr_class:
         self._state = state
         self.length = max(poly)
         self.poly = [1 if i in poly else 0 for i in range(self.length + 1)]
-        print(f'Initial state -> {self._state}')
 
         if state is None:
             self.state = [1 for _ in range(self.length + 1)]
         else:
             self.state = [int(i) for i in list(bin(state)[2:])]
+            print(f'Initial state -> {self.state}')
 
         self.output = self.state[self.length - 1]
         self.feedback = functools.reduce(xor, [a & b for a, b in zip(self.poly[1:], self.state)])
