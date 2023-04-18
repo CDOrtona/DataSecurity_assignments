@@ -1,5 +1,6 @@
 import functools    
 from operator import xor
+import utils
 
 
 class Lfsr_class:
@@ -100,8 +101,44 @@ class AlternatingStepGenerator():
             out = (out << 1) | bit
         return out
     
-    def __str__(self) :
-        print
 
+
+
+class RC4():
+    
+    def __init__(self, seed, drop=0):
+        ''' Documentation '''
+        '''KSA'''
+        self.P = list(range(256))   #initilize the identity permutation 
+        _j = 0       
+        key_list = utils.bytes_to_bits(seed)
+
+        for _i in range(255):
+            _j = (_j + self.P[_i] + key_list[_i % len(key_list)])%256
+            self.P[_i], self.P[_j] = self.P[_j], self.P[_i]
+        
+        #variable for the PGRA
+        self.i = 0
+        self.j = 0
+
+        for _ in range(drop):
+            self.__next__
+
+    
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        ''' Documentation '''
+        '''PRGA'''
+        # Code here
+        self.i = (self.i + 1) % 256
+        self.j = (self.j + self.P[self.i]) % 256
+        self.P[self.i], self.P[self.j] = self.P[self.j], self.P[self.i]
+        byte = self.P[(self.P[self.i] + self.P[self.j]) % 256]
+        byte = utils.bits_to_bytes(utils.integer_to_bits(byte))
+        
+
+        return byte
     
 
