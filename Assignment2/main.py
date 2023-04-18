@@ -1,5 +1,6 @@
 from Lfsr import Lfsr_class
 from Lfsr import AlternatingStepGenerator
+from Lfsr import RC4
 from itertools import islice
 import utils
 
@@ -68,9 +69,60 @@ def Alternating_step():
     bytestream = utils.bits_to_bytes(plaintext)
     print(bytestream)
 
+
+def RC4_dec():
+    key = b'0123456789ABCDEF'
+    ciphertext = (
+        b"\x0f\x9e\xec\xc3\x0f\xeck\xa5\xc9\xd4\xd4\xb81\xf0\xd5[\x93"
+        b"\xbc\xdaY^\x0e\xc1'\xdb\x1eP\xc0uD\xeb\x91E]\x15\xcf\x85\x07%"
+        b"\x97\xffl\xf1\xbb\xe1*\xa0\xee\xd3\x94\x17\xb0|e\x93h\xd7\xc5"
+        b"\xc3tT\x84\xee%\xcb\x15\r\xc4\xe8\n\xf2\xd0.\xec\xc6\xe1-\xb4"
+        b"\x8b\x9a\x14\x823k\xab?\x8b\x9c\xaas\xa1#\xb8\xb2\xceh\xb5\x8b"
+        b"'\x90B}C\x80~\x8cr\xde\xc9\xe2\x17\xe45\xb9\x10\x94\xd4\x0eRJ"
+        b"\x0fr&\xe7\xe3P\xbfz\xecIA\x94\xe60\xa8{_\x03\xc7\x91\xcf\xc6"
+        b"\x04\xfc\x8d\x86-E\x13\xba\x13i\x17;\xd7\x8e \xa5\xe6\xa5uR\n"
+        b"89z\xe2YZ!e\x0f,s\x9a\xacN\xab\xc7\xcaOO\x81\xe06\x03\xac7\x9b"
+        b",%\xf7\x9d(\xde\x0b\xc3\xbf\xbe7\xc7<\xf4r\x0eLz\xd8\xe5b\xa0n"
+        b"\x11f\xfe\xca+RNnL\xef+\x1b\x1c\x0b\x8a\xb6M\xbdU\xd6\x1c\x9cn"
+        b"\t\x8aX>B9\xa4\xf7\xd7jS\xa3\xfd\xeb=\xeeY\xbf\x8dG\xab\xc6"
+        b"\x08 \xfba\x90\xdbla\xbf\xf0\x9c\x1a\xa0\xcb\x9a\x7f\x88X\x1dV"
+        b"\xd2'\xba\x1b\x16l\xc3vx\xddqU\xf72@\x86>A\xe6b\x050Y\xed\x8bJ"
+        b"!\xe0\x80I\xa4X\x9e\xd6^\x126\x99\x93\xa3(\xc5\xf0\xbd\xdei\xcb"
+        b"\xdc5\xf58\xda\xa5\x96\xb9!5>\xdbJ\xd4\xef\xe1\x0e\xfeo\x97`"
+        b"\xd7[\x18\t\xf4/DV\xdd\xe8~#\xbd\xfd{B\xacC=\xa9\xd5\xbb\xdbH"
+    )
+    drop = 3072
+
+    RC4_ist = RC4(key, drop)
+    result = []
+
+    bilist = utils.bytes_to_bits(ciphertext)
+    print("lenght is", len(bilist))
+
+    for b in islice(RC4_ist, int(len(bilist)/8)):
+        result.append(b)
+
+    ciph_bytelist = []
+    for i in range(0, int(len(bilist)), 8):
+        ciph_bytelist.append(utils.bits_to_bytes(bilist[i:i+8]))
+
+
+
+    plaintext = []
+    for i in range(len(result)):
+        plaintext.append(bytes(a ^ b for a, b in zip(result[i], ciph_bytelist[i])))
+
+    print(plaintext)
+
+
+
     
 
-        
+
+
+
+
+    
 
 
 
@@ -80,6 +132,7 @@ def Alternating_step():
 
 if __name__ == '__main__':
     #lfsr_generator() #trovare un modo per stampare il polinomio di grado massimo che genera
-    Alternating_step() 
+    #Alternating_step()
+    RC4_dec() 
     pass
 
