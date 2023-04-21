@@ -27,14 +27,10 @@ def lfsr_generator():
 
 
 def Alternating_step():
-    seed = 0x3FF
-    alt_gen = AlternatingStepGenerator(seed)
-    result = []
-    for b in islice(alt_gen, 4344):
-        result.append(b)
+    SEED = 0x3FF
+    alt_gen = AlternatingStepGenerator(SEED)
 
-    # print(result)
-    ciphertext = (
+    CIPHERTEXT_ALT_STEP = (
         b'Y\xea\xfc\xc2\x8c\x17p{\x1f8\xbf,N\\\xf8\x97\xeb\x99#\'#\xf3\x1cY\xfd'
         b'\x82\xe9\xbe\xc2\xeb\x16H\xd0Q\xd5\xa8Y\x8e\x8b\\\xeb\x8d\xe1\xea\xf5'
         b'\x83\xb0\xe7\xee\xf2\\\xear\x848l\xe2\xb2\x06ov%\xdb\x08\x13\xf2qy\xf6'
@@ -59,12 +55,11 @@ def Alternating_step():
         b'\xfa|X\x16\x82\xc2\xdb\x86\xfd=\x07cK\x15?\x98\xd3\xf8\xda\xcb\x0c\x0e'
         b'\x84\\\x9c\x84\x87\xd1\xa5P\xab\xcd;')
 
-    bilist = utils.bytes_to_bits(ciphertext)
-    print("lenght is", len(bilist))
+    # ciphertext expressed as a list of integers, where each integer is a byte
+    cipher_list_int = utils.bytes_to_bits(CIPHERTEXT_ALT_STEP)
+    print("lenght is", len(cipher_list_int))
 
-    plaintext = []
-    for i in range(len(bilist)):
-        plaintext.append(bilist[i] ^ result[i])
+    plaintext = [cipher_list_int[i] ^ next(alt_gen) for i in range(len(cipher_list_int))]
 
     bytestream = utils.bits_to_bytes(plaintext)
     print(bytestream)
@@ -117,6 +112,6 @@ def RC4_dec():
 
 if __name__ == '__main__':
     # lfsr_generator() #trovare un modo per stampare il polinomio di grado massimo che genera
-    # Alternating_step()
-    RC4_dec()
+    Alternating_step()
+    # RC4_dec()
     pass

@@ -62,50 +62,47 @@ class Lfsr_class:
         return string
 
 
-class AlternatingStepGenerator():
-    ''' Documentation '''
+def _check_seed(seed):
+    try:
+        if 1 in seed:
+            return seed
+        else:
+            raise ValueError('The seed of the LFSR is 0')
+    except ValueError as ex:
+        print(ex)
+        quit()
 
-    def check_seed(self, seed):
-        try:
-            if 1 in seed:
-                return seed
-            else:
-                raise ValueError('The seed of the LFSR is 0')
-        except ValueError as ex:
-            print(ex)
-            quit()
 
+def bit_to_int(bitlist):
+    out = 0
+    for bit in bitlist:
+        out = (out << 1) | bit
+    return out
+
+
+class AlternatingStepGenerator:
     def __init__(self, seed):
 
-        ''' Documentation '''
         seed_bin = [int(i) for i in bin(seed)[2:]]  # da implementare RISE AN ERROR
 
-        seed_c = self.check_seed(seed_bin[8:])
-        seed_0 = self.check_seed(seed_bin[:5])
-        seed_1 = self.check_seed(seed_bin[5:8])
+        seed_c = _check_seed(seed_bin[8:])
+        seed_0 = _check_seed(seed_bin[:5])
+        seed_1 = _check_seed(seed_bin[5:8])
 
-        self.lfsr_c = Lfsr_class([2, 1, 0], self.bit_to_int(seed_c))
-        self.lfsr_0 = Lfsr_class([5, 2, 0], self.bit_to_int(seed_0))
-        self.lfsr_1 = Lfsr_class([3, 1, 0], self.bit_to_int(seed_1))
+        self.lfsr_c = Lfsr_class([2, 1, 0], bit_to_int(seed_c))
+        self.lfsr_0 = Lfsr_class([5, 2, 0], bit_to_int(seed_0))
+        self.lfsr_1 = Lfsr_class([3, 1, 0], bit_to_int(seed_1))
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        ''' Documentation '''
-        # Code here
         if next(self.lfsr_c):
             bit = next(self.lfsr_1) ^ self.lfsr_0.output
         else:
             bit = self.lfsr_1.output ^ next(self.lfsr_0)
 
         return bit
-
-    def bit_to_int(self, bitlist):
-        out = 0
-        for bit in bitlist:
-            out = (out << 1) | bit
-        return out
 
 
 class RC4:
