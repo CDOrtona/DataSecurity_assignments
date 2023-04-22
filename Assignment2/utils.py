@@ -1,7 +1,6 @@
-import functools
 from math import log2
-from operator import xor
 from math import ceil
+
 
 def bits_to_integer(bits):
     '''
@@ -23,6 +22,7 @@ def bits_to_integer(bits):
         integer = (integer << 1) ^ bit
         
     return integer
+
 
 def bits_to_bytes(bits, num_bytes=None, byteorder='big'):
     '''
@@ -74,12 +74,11 @@ def berlekamp_massey(bits):
     for t in range(len(bits)):
         d_prev = bitlist_to_int(bits[t - m:t + 1]) & P
         d = disparity(d_prev)
-        #print("disparity ->", d)
+        # print("disparity ->", d)
 
         if d == 1:
             if 2 * m <= t:
-                R = P  # fix
-                P = P ^ (Q << r)  # P xor Q shifted
+                R, P = P, P ^ (Q << r)
                 Q = R
                 m, r = t + 1 - m, 0
             else:
@@ -89,8 +88,7 @@ def berlekamp_massey(bits):
 
     linear_complexity = len(int_to_bitlist(P)) - 1
 
-    return P, linear_complexity 
-
+    return P, linear_complexity
 
 
 def integer_to_bits(integer, nbit=None):
@@ -117,6 +115,7 @@ def integer_to_bits(integer, nbit=None):
     for i in range(nbit):
         bits.append((integer & (1 << i)) >> i)
     return bits[::-1]
+
 
 def bytes_to_bits(bytestream):
     '''

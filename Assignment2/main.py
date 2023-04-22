@@ -16,20 +16,19 @@ def lfsr_generator():
     lfsr = Lfsr_class(poly_list, state_list)
 
     print('\nstate     b fb')
-    for b in islice(lfsr, 7):
+    for _ in islice(lfsr, 7):
         print_lfsr(lfsr)
 
     full_cycle = lfsr.cycle()
     print(f'\nfull LFSR cycle -> {full_cycle}')
 
     P, comp = utils.berlekamp_massey(full_cycle)
-    print(P, comp)
+    # NOTE: implement a way to print the poly expanded
+    print(f'Poly: {P}, linear complexity: {comp}')
 
 
 def Alternating_step():
     SEED = 0x3FF
-    alt_gen = AlternatingStepGenerator(SEED)
-
     CIPHERTEXT_ALT_STEP = (
         b'Y\xea\xfc\xc2\x8c\x17p{\x1f8\xbf,N\\\xf8\x97\xeb\x99#\'#\xf3\x1cY\xfd'
         b'\x82\xe9\xbe\xc2\xeb\x16H\xd0Q\xd5\xa8Y\x8e\x8b\\\xeb\x8d\xe1\xea\xf5'
@@ -55,14 +54,12 @@ def Alternating_step():
         b'\xfa|X\x16\x82\xc2\xdb\x86\xfd=\x07cK\x15?\x98\xd3\xf8\xda\xcb\x0c\x0e'
         b'\x84\\\x9c\x84\x87\xd1\xa5P\xab\xcd;')
 
+    alt_gen = AlternatingStepGenerator(SEED)
+
     # ciphertext expressed as a list of integers, where each integer is a byte
     cipher_list_int = utils.bytes_to_bits(CIPHERTEXT_ALT_STEP)
-    print("lenght is", len(cipher_list_int))
-
-    plaintext = [cipher_list_int[i] ^ next(alt_gen) for i in range(len(cipher_list_int))]
-
-    bytestream = utils.bits_to_bytes(plaintext)
-    print(bytestream)
+    plaintext = utils.bits_to_bytes([a ^ b for a, b in zip(cipher_list_int, alt_gen)])
+    print(plaintext)
 
 
 def RC4_dec():
@@ -89,29 +86,12 @@ def RC4_dec():
     )
     drop = 3072
 
-    RC4_ist = RC4(key, drop)
-    result = []
-
-    bilist = utils.bytes_to_bits(ciphertext)
-    print("lenght is", len(bilist))
-
-    for b in islice(RC4_ist, int(len(bilist) / 8)):
-        result.append(b)
-
-    # ciph_bytelist = []
-    # for i in range(0, int(len(bilist)), 8):
-    #     ciph_bytelist.append(utils.bits_to_bytes(bilist[i:i + 8]))
-
-    plaintext = [chr(a ^ b) for a, b in zip(result, ciphertext)]
-
+    RC4_key = RC4(key, drop)
+    plaintext = [chr(a ^ b) for a, b in zip(RC4_key, ciphertext)]
     print("".join(plaintext))
 
 
-# ______________ Alternating Step Generator _______________
-
-
 if __name__ == '__main__':
-    # lfsr_generator() #trovare un modo per stampare il polinomio di grado massimo che genera
+    lfsr_generator()
     Alternating_step()
-    # RC4_dec()
-    pass
+    RC4_dec()
