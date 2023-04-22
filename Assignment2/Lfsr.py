@@ -1,6 +1,5 @@
 import functools
 from operator import xor
-import utils
 
 
 class Lfsr_class:
@@ -62,18 +61,17 @@ class Lfsr_class:
         return string
 
 
-def _check_seed(seed):
-    try:
-        if 1 in seed:
-            return seed
-        else:
-            raise ValueError('The seed of the LFSR is 0')
-    except ValueError as ex:
-        print(ex)
-        quit()
+# ------------------------------ Alternating Step Generator --------------------------------------------
 
 
-def bit_to_int(bitlist):
+def _check_seed(seed, lfsr_type):
+    if 1 in seed:
+        return seed
+    else:
+        raise ValueError(f'The LFSR {lfsr_type} has its initial state set to 0')
+
+
+def _bit_to_int(bitlist):
     out = 0
     for bit in bitlist:
         out = (out << 1) | bit
@@ -83,15 +81,19 @@ def bit_to_int(bitlist):
 class AlternatingStepGenerator:
     def __init__(self, seed):
 
-        seed_bin = [int(i) for i in bin(seed)[2:]]  # da implementare RISE AN ERROR
+        seed_bin = [int(i) for i in bin(seed)[2:]]
 
-        seed_c = _check_seed(seed_bin[8:])
-        seed_0 = _check_seed(seed_bin[:5])
-        seed_1 = _check_seed(seed_bin[5:8])
+        try:
+            self.seed_c = _check_seed(seed_bin[8:], "C")
+            self.seed_0 = _check_seed(seed_bin[:5], "0")
+            self.seed_1 = _check_seed(seed_bin[5:8], "1")
+        except ValueError as err:
+            print(err)
+            quit()
 
-        self.lfsr_c = Lfsr_class([2, 1, 0], bit_to_int(seed_c))
-        self.lfsr_0 = Lfsr_class([5, 2, 0], bit_to_int(seed_0))
-        self.lfsr_1 = Lfsr_class([3, 1, 0], bit_to_int(seed_1))
+        self.lfsr_c = Lfsr_class([2, 1, 0], _bit_to_int(self.seed_c))
+        self.lfsr_0 = Lfsr_class([5, 2, 0], _bit_to_int(self.seed_0))
+        self.lfsr_1 = Lfsr_class([3, 1, 0], _bit_to_int(self.seed_1))
 
     def __iter__(self):
         return self
@@ -105,24 +107,24 @@ class AlternatingStepGenerator:
         return bit
 
 
+# ------------------------------------------ RC4 ---------------------------------------------------------
+
 class RC4:
 
     def __init__(self, seed, drop=0):
-        ''' Documentation '''
-        '''KSA'''
-        self.P = list(range(256))  # initilize the identity permutation
-        _j = 0
-        # key_list = utils.bytes_to_bits(seed)
-        print(seed)
+        # initialization of the identity permutation
+        self.P = list(range(256))
+        t = 0
 
-        for _i in range(256):
-            _j = (_j + self.P[_i] + seed[_i % len(seed)]) % 256
-            self.P[_i], self.P[_j] = self.P[_j], self.P[_i]
+        for k in range(256):
+            t = (t + self.P[k] + seed[k % len(seed)]) % 256
+            self.P[k], self.P[t] = self.P[t], self.P[k]
 
-        # variable for the PGRA
+        # variables for the PGRA
         self.i = 0
         self.j = 0
 
+        # It'll drop the first n values generated
         for _ in range(drop):
             self.__next__()
 
@@ -130,13 +132,8 @@ class RC4:
         return self
 
     def __next__(self):
-        ''' Documentation '''
-        '''PRGA'''
-        # Code here
         self.i = (self.i + 1) % 256
         self.j = (self.j + self.P[self.i]) % 256
         self.P[self.i], self.P[self.j] = self.P[self.j], self.P[self.i]
         byte = self.P[(self.P[self.i] + self.P[self.j]) % 256]
-        # byte = utils.bits_to_bytes(utils.integer_to_bits(byte))
-
         return byte
