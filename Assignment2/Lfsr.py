@@ -137,3 +137,20 @@ class RC4:
         self.P[self.i], self.P[self.j] = self.P[self.j], self.P[self.i]
         byte = self.P[(self.P[self.i] + self.P[self.j]) % 256]
         return byte
+
+# ------------------------------- Bonus Task -----------------------------------------
+
+
+class StreamCipher:
+
+    def __init__(self, key, prng, **kwargs):
+        self.prng = prng(key, **kwargs)
+
+    def encrypt(self, plaintext):
+        return self._crypting(plaintext)
+
+    def decrypt(self, ciphertext):
+        return self._crypting(ciphertext)
+
+    def _crypting(self, text):
+        return [a ^ b for a, b in zip(text, self.prng)]
