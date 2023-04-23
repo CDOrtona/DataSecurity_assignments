@@ -1,6 +1,7 @@
 from Lfsr import Lfsr_class
 from Lfsr import AlternatingStepGenerator
 from Lfsr import RC4
+from Lfsr import StreamCipher
 from itertools import islice
 import utils
 
@@ -91,7 +92,23 @@ def RC4_dec():
     print("".join(plaintext))
 
 
+def bonus_task():
+
+    MESSAGE = "This is a random message"
+    KEY = b"0123456789ABCDEF"
+    ndrop = 3072
+
+    alice = StreamCipher(KEY, prng=RC4, drop=ndrop)
+    bob = StreamCipher(KEY, prng=RC4, drop=ndrop)
+
+    ciphertext = alice.encrypt(MESSAGE.encode('utf-8'))
+    plaintext_bob = bob.decrypt(ciphertext)
+    print(f'Ciphertext: {ciphertext}')
+    print(f'Decrypted message: {"".join([chr(i) for i in plaintext_bob])}')
+
+
 if __name__ == '__main__':
-    lfsr_generator()
-    Alternating_step()
-    RC4_dec()
+    # lfsr_generator()
+    # Alternating_step()
+    # RC4_dec()
+    bonus_task()
