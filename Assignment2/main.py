@@ -12,13 +12,13 @@ def print_lfsr(lfsr):
 
 def lfsr_generator():
     poly_list = [3, 1, 0]  # possibile errore di lunghezza poly != state
-    state_list = 7
+    state_list = 1
 
     lfsr = Lfsr_class(poly_list, state_list)
 
     print('\nstate     b fb')
     for _ in islice(lfsr, 7):
-        print_lfsr(lfsr)
+        print(lfsr)
 
     full_cycle = lfsr.cycle()
     print(f'\nfull LFSR cycle -> {full_cycle}')
@@ -108,7 +108,7 @@ def bonus_task():
 
 
 if __name__ == '__main__':
-    # lfsr_generator()
+    lfsr_generator()
     # Alternating_step()
     # RC4_dec()
-    bonus_task()
+    #bonus_task()

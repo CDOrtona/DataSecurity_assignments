@@ -15,6 +15,7 @@ class Lfsr_class:
             self.state = [1 for _ in range(self.length + 1)]
         else:
             self.state = [int(i) for i in list(bin(state)[2:])]
+            self.state = [0]*(self.length - len(self.state)) + self.state if (self.length > len(self.state)) else self.state
             print(f'Initial state -> {self.state}')
 
         self.output = self.state[self.length - 1]
@@ -38,7 +39,6 @@ class Lfsr_class:
         return self.run_steps(2 ** (len(self)) - 1)
 
     def __next__(self):
-        # self.counter += 1
         self.state.insert(0, self.feedback)
         self.state = self.state[:self.length]
         self.output = self.state[self.length - 1]
@@ -47,11 +47,7 @@ class Lfsr_class:
         return self.output
 
     def __str__(self):
-        poly_list = [f'x^{d}' for d in self._poly]
-        poly = "+".join(poly_list)
-        string = f'\nLFSR INFO:' \
-                 f'\nPoly: {poly} ' \
-                 f'\nState: {hex(self._state)}'
+        string = f'{self.state} {self.output} {self.feedback}'
         return string
 
     def __repr__(self):
