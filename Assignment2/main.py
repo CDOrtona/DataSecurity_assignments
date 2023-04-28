@@ -108,7 +108,7 @@ def bonus_task():
 
 
 if __name__ == '__main__':
-    lfsr_generator()
-    # Alternating_step()
+    #lfsr_generator()
+    Alternating_step()
     # RC4_dec()
     #bonus_task()
