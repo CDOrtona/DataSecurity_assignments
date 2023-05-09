@@ -7,8 +7,8 @@ import numpy as np
 def block_cipher():
     key = b'0123456701234567'
     # cipher = AES.new(key, AES.MODE_ECB)
-    sender = AES.new(key, AES.MODE_CBC)
-    receiver = AES.new(key, AES.MODE_CBC, sender.IV)
+    sender = AES.new(key, AES.MODE_CFB)
+    receiver = AES.new(key, AES.MODE_CFB, sender.IV)
     # cipher = AES.new(key, AES.MODE_CFB)
     # cipher = AES.new(key, AES.MODE_CTR)
     plaintextA = b'this is a random message'
