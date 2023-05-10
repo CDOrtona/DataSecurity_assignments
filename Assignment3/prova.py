@@ -1,5 +1,7 @@
 import random
 import math
+from Cryptodome.Cipher import AES
+from Cryptodome.Util.Padding import pad, unpad
 
 def square_and_multiply(base, exp, mod):
     exp_list = [int(i) for i in bin(abs(exp))[2:]]
@@ -57,7 +59,7 @@ def extended_eucledian_algorithm(a, m):
 
     if r1 == 1:
         if s1 < 0:
-            return int((m - (-s1)) % m)
+            return int(m+s1)
         return int(s1%m)
     else:
         raise ValueError("No modular inverse exists")
@@ -83,18 +85,16 @@ class RSA():
 
 
     def _compute_key(self, trials, key_length = 128):
-        # p = self._sample_prime_number(key_length, trials)
-        # q = self._sample_prime_number(key_length, trials)
+        p = self._sample_prime_number(key_length, trials)
+        q = self._sample_prime_number(key_length, trials)
         # print("P", p)
         # print("Q", q)
-        p, q = 17,17
         n = q*p
-        print(n)
         # p = 59
         # q = 97
         # n = q*p
 
-        totient = (p-1)*(q-1)
+        totient = (p-1)*(q-1) if p!= q else p*(p-1)
         print("totient", totient)
 
         while True:
@@ -104,7 +104,6 @@ class RSA():
 
         print("e", e)
         
-        e = 57
 
         return (n,e), totient
 
@@ -131,16 +130,31 @@ class RSA():
         # Code here
         return square_and_multiply(x, self.key_pub[1], self.key_pub[0])
 
-Bob = RSA(key_length = 8, mrt_trials=1000)
-Alice = RSA(k_pub=Bob.key_pub)
+# Bob = RSA(key_length = 128, mrt_trials=1000)
+# Alice = RSA(k_pub=Bob.key_pub)
 
-x = 9
-y = Alice.encrypt(x)
-print("y",y)
-x = Bob.decrypt(y)
-print("result", x)
+# x = 24051709
+# y = Alice.encrypt(x)
+# print("y",y)
+# x = Bob.decrypt(y)
+# print("result", x)
 
+k_AES = b'0123456701234567'
+print(int.from_bytes(k_AES, "big"))
+# ciphertext_AES.bin
 
+Bob = RSA(key_length=128, mrt_trials=1000)
+Alice_RSA = RSA(k_pub=Bob.key_pub)
+
+k_aes_enc = Alice_RSA.encrypt(int.from_bytes(k_AES, "big"))
+print(k_aes_enc)
+
+with open(file='ciphertext_AES.bin', mode='rb') as f:
+    cip_AES = f.read()
+
+Bob_AES = AES.new(Bob.decrypt(k_aes_enc).to_bytes(128//8, "big"), AES.MODE_ECB)
+plaintext = Bob_AES.decrypt(cip_AES)
+print(plaintext)
 
 
 
