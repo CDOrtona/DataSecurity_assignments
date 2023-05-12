@@ -35,6 +35,7 @@ def message_exc():
     Alice = RSA(k_pub=Bob.key_pub)
 
     k_aes_enc = Alice.encrypt(int.from_bytes(k_AES, "big"))
+    print(f'length of the encrypted AES key is {type(k_aes_enc)}')
 
     y = read_bin('ciphertext_AES.bin')
 
@@ -45,6 +46,13 @@ def message_exc():
     print(f'---- Plaintext ---- \n {x}')
 
 
+def test():
+    e = 41411
+    bin_e = bin(e)[2:0]
+    print(bin(e))
+
+
 if __name__ == "__main__":
     # block_cipher()
-    message_exc()
+    # message_exc()
+    test()
