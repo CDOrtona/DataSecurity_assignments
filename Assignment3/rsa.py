@@ -2,7 +2,6 @@ import random
 import math
 from utils import extended_euclidean_algorithm, miller_rabin_test, square_and_multiply
 
-
 class RSA:
 
     def __init__(self, key_length=128, k_pub=None, mrt_trials=None):
@@ -27,10 +26,11 @@ class RSA:
         # it is wrong to choose two same prime numbers because it reduces the security of the system
         totient = (p - 1) * (q - 1) if p != q else p * (p - 1)
 
-        while True:
-            e = random.randint(2, totient - 1)
-            if math.gcd(e, totient) == 1:
-                break
+        # e is found such that gcd(e,m) = 1, this means that e must be prime
+        # 65537 = 2^16 + 1 is commonly used as a public exponent in the RSA cryptosystem
+        # it is big enough to be secure and it has a low hamming weight hence it's not
+        # computationally demanding to compute
+        e = 65537
 
         return (n, e), (p, q, totient)
 
@@ -38,8 +38,9 @@ class RSA:
 
         while True:
             # n > x where x is the length of the plaintext, which in this case is the AES key
-            # the AES key is 128-bit long, hence the chosen interval is: (2^64, 2^65) -> n is long 129-bit
-            number = random.randint(2 ** (length / 2), 2 ** (length / 2 + 1))
+            # the AES key is 128-bit long, hence the chosen interval is: (2^64, 2^65 -1) -> n is long 129-bit
+            # NOTE: cryptographically secure pseudo random generator?
+            number = random.randint(2 ** (length / 2), 2 ** (length / 2 + 1) - 1)
             if miller_rabin_test(number, mrt_trials):
                 break
         return number
