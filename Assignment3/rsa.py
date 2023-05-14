@@ -1,6 +1,6 @@
 import random
-import math
 from utils import extended_euclidean_algorithm, miller_rabin_test, square_and_multiply
+
 
 class RSA:
 
@@ -41,7 +41,11 @@ class RSA:
             # the AES key is 128-bit long, hence the chosen interval is: (2^64, 2^65 -1) -> n is long 129-bit
             # NOTE: cryptographically secure pseudo random generator?
             number = random.randint(2 ** (length / 2), 2 ** (length / 2 + 1) - 1)
-            if miller_rabin_test(number, mrt_trials):
+            # since e=65537 I have to pick numbers which are not congruent to 1 modulo 65537
+            # phi(n)=(p-1)(q-1) and gcd(e,phi(n))=1 if this last relation is not satisfied: gcd(e,p-1)=k
+            # and we would have p-1 == 0 mod(e) which means p-1 is a multiple of e and it would mean that no module
+            # inverse exists because p-1 and e are not coprime
+            if miller_rabin_test(number, mrt_trials) and (lambda x: False if x % 65537 == 0 else True)(number):
                 break
         return number
 
@@ -63,8 +67,7 @@ class RSA:
         else:
             return f'------------------ RSA INFO ---------------- \n' \
                    f'Role: {self.role} \n' \
-                   f'Public key (n, e) -> {self.key_pub} \n' \
-
+                   f'Public key (n, e) -> {self.key_pub} \n'
 
     def __repr__(self):
         if self.role == 'RECEIVER':
@@ -76,4 +79,4 @@ class RSA:
         else:
             return f'------------------ RSA INFO ---------------- \n' \
                    f'Role: {self.role} \n' \
-                   f'Public key (n, e) -> {self.key_pub} \n' \
+                   f'Public key (n, e) -> {self.key_pub} \n'
