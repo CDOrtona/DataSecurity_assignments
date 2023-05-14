@@ -54,5 +54,5 @@ def test():
 
 if __name__ == "__main__":
     # block_cipher()
-    # message_exc()
+    message_exc()
     test()
