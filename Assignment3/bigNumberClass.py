@@ -13,14 +13,19 @@ class BigInt:
     
     
     def __init__(self, value = None, ndigit = None):
-        if ndigit == None:
+
+        if ndigit is None:
             if isinstance(value, np.ndarray):
-                ndigit = len(value)
+                ndigit = value.size
+            elif ( value is None):
+                ndigit = 0
             else:
-                ndigit = math.ceil(len(bin(value)[2:])//64)
+                ndigit = math.ceil(len(bin(value)[2:])/64 )
 
         if not isinstance(value, np.ndarray):
             self.values = self._from_num_to_array(value, ndigit)
+        elif ( value is None):
+            self.values = np.array([], dtype=np.uint64)
         else:
             self.values = value
 
@@ -66,10 +71,12 @@ class BigInt:
         return self.long_mul(self.values, self.values.size, x.values, x.values.size)
 
 
-a = BigInt(2**63,2)
-b = BigInt(2,2)
+a = BigInt()
+print(a)
+b = BigInt(2)
+print(b)
 
-c = a*b
+c = a+b
 print(c)
 
     
