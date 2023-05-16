@@ -45,6 +45,7 @@ class RSA:
             # phi(n)=(p-1)(q-1) and gcd(e,phi(n))=1 if this last relation is not satisfied: gcd(e,p-1)=k
             # and we would have p-1 == 0 mod(e) which means p-1 is a multiple of e and it would mean that no module
             # inverse exists because p-1 and e are not coprime
+            # basically I have to check whether the prime number found is divisible by the public exponent or not
             if miller_rabin_test(number, mrt_trials) and (lambda x: False if x % 65537 == 0 else True)(number):
                 break
         return number

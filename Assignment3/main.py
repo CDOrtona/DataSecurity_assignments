@@ -10,7 +10,7 @@ def block_cipher():
     key = b'0123456701234567'
     # cipher = AES.new(key, AES.MODE_ECB)
     sender = AES.new(key, AES.MODE_CFB)
-    receiver = AES.new(key, AES.MODE_CFB, sender.IV)
+    receiver = AES.new(key, AES.MODE_CFB, IV=sender.IV)
     print(f'AES block size -> {AES.block_size}')
     # cipher = AES.new(key, AES.MODE_CFB)
     # cipher = AES.new(key, AES.MODE_CTR)
@@ -53,6 +53,6 @@ def test():
 
 
 if __name__ == "__main__":
-    # block_cipher()
-    message_exc()
-    test()
+    block_cipher()
+    # message_exc()
+    # test()
