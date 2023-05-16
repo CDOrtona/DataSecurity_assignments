@@ -29,22 +29,15 @@ class BigInt:
         else:
             self.values = value
 
-
     def long_sum(self, a, b):
-        # somma da luogo a risultato che al più è una digit in più del più lungo dei due, padding dei due per allinearli. 
-        sum_result = np.zeros( max(a.size, b.size) + 1, dtype=np.uint64)
-        a_pad = np.pad(a, (sum_result.size - a.size,0))
-        b_pad = np.pad(b, (sum_result.size - b.size,0))
+        sum_result = np.zeros(max(a.size, b.size) + 1, dtype=np.uint64)
         carry = 0
+        for i in range(len(x) - 1, -1, -1):
+            temp_sum = int(x[i]) + int(y[i]) + carry
+            sum_result[i] = temp_sum % 2 ** 64
+            carry = temp_sum // 2 ** 64
 
-        for i in range(sum_result.size - 1, -1, -1):
-            temp_sum = int(a_pad[i]) + int(b_pad[i]) + carry
-            sum_result[i] = temp_sum % 2**64
-            carry = temp_sum // 2**64
-        
-        c = BigInt(sum_result)
-    
-        return c
+        return sum_result
     
     
     def __add__(self, x):
@@ -71,7 +64,7 @@ class BigInt:
         return self.long_mul(self.values, self.values.size, x.values, x.values.size)
 
 
-a = BigInt()
+a = BigInt(2**64)
 print(a)
 b = BigInt(2)
 print(b)

@@ -49,3 +49,7 @@ def big_mul(x, valuex,y, valuey):
     return mul_result
 
 print(big_mul(from_num_to_array(3,3),3,from_num_to_array(8 ,3),2))
+
+a = np.array([2**32-1,1], dtype=np.uint32)
+c = a[0] + a[1]
+print(c)
