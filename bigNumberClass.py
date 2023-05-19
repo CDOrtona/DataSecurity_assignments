@@ -27,7 +27,7 @@ class BigInt:
     def long_sum(self, a, b):
         # somma da luogo a risultato che al più è una digit in più del più lungo dei due, padding dei due per
         # allinearli.
-        print(a, b)
+        print(a, '\n', b)
         sum_result = np.zeros(max(len(a), len(b)) + 1, dtype=np.uint64)
         a_pad = np.pad(a, (sum_result.size - len(a), 0))
         b_pad = np.pad(b, (sum_result.size - len(b), 0))
@@ -93,11 +93,16 @@ class BigInt:
 # b = BigInt(2)
 # a = BigInt(3*2**64+1)
 # b = BigInt(2*2**64)
-a = BigInt(3*2**64+2**64-1)
-b = BigInt(2*2**64+2)
+# a = BigInt(3*2**64+2**64-1)
+# b = BigInt(2*2**64+2)
 # a = BigInt(2*2**64 + 2) # questo funziona
 # b = BigInt(2**64-1)
+a = BigInt(2**64-1)
+b = BigInt(2)
 c = a * b
-print(f'length of C is {len(c)}')
+
+d = BigInt((2**64-1)*(2))
+print(f'd is {d}')
+
 print(f'c = {c}')
 
